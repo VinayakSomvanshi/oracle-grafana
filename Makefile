@@ -36,16 +36,16 @@ dist: build-all-backends
 	@if [ -f src/module.js ]; then cp src/module.js* $(DIST_DIR)/; fi
 	@echo "==> Dist directory ready."
 
-sign: dist
+sign:
 	@echo "==> Signing plugin with @grafana/sign-plugin..."
 	@if [ -z "$$GRAFANA_ACCESS_POLICY_TOKEN" ]; then \
 		echo "ERROR: GRAFANA_ACCESS_POLICY_TOKEN is not set."; \
 		echo "To sign: export GRAFANA_ACCESS_POLICY_TOKEN='<your-token>' && make sign"; \
 		exit 1; \
 	fi
-	npx --yes @grafana/sign-plugin@latest --rootUrls $${GRAFANA_ROOT_URLS:-http://localhost:3000}
+	npx --yes @grafana/sign-plugin@latest --rootUrls $${GRAFANA_ROOT_URLS:-http://localhost:3000,http://127.0.0.1:3000}
 
-package: dist
+package:
 	@echo "==> Creating release archive..."
 	tar -czf $(PLUGIN_ID)-$(VERSION).tar.gz -C $(DIST_DIR) .
 	@echo "Created $(PLUGIN_ID)-$(VERSION).tar.gz"

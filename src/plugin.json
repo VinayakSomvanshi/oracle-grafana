@@ -19,8 +19,8 @@
       "large": "img/logo-512.png"
     },
     "screenshots": [],
-    "updated": "%TODAY%",
-    "version": "%VERSION%"
+    "updated": "2026-09-30",
+    "version": "2.0.0"
   },
   "metrics": true,
   "name": "Oracle Data Source",
