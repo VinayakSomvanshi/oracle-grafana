@@ -28,11 +28,17 @@ This plugin connects Grafana directly to any Oracle Database instance (11g, 12c,
 
 Choose the installation method best suited to your environment:
 
-### Method 1: One-Line grafana-cli Install (Fastest for Standalone Servers)
+### Method 1: One-Line Grafana CLI Install (Fastest for Standalone Servers)
 
-Use Grafana's built-in CLI to download, verify, and unpack the release directly:
+Use Grafana's built-in CLI subcommand to download, verify, and unpack the release directly:
 ```bash
-sudo grafana-cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip plugins install oracle-grafana-datasource
+# Modern Grafana (v10+, v11+, v12+, v13+)
+sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip plugins install oracle-grafana-datasource
+
+# Legacy Grafana
+sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip plugins install oracle-grafana-datasource
+
+# Restart Grafana
 sudo systemctl restart grafana-server
 ```
 

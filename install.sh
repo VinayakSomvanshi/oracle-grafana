@@ -34,15 +34,26 @@ fi
 
 TARGET_DIR="${PLUGIN_DIR}/${PLUGIN_ID}"
 
-# Try installation via grafana-cli if available
+# Try installation via grafana cli or grafana-cli
 INSTALLED=0
-if command -v grafana-cli >/dev/null 2>&1; then
-  echo "==> Detected grafana-cli. Attempting installation via grafana-cli..."
-  if grafana-cli --pluginUrl "$ZIP_URL" plugins install "$PLUGIN_ID"; then
+if command -v grafana >/dev/null 2>&1; then
+  echo "==> Detected grafana command. Attempting installation via 'grafana cli'..."
+  if grafana cli --pluginUrl "$ZIP_URL" plugins install "$PLUGIN_ID" 2>/dev/null; then
     INSTALLED=1
-  else
-    echo "NOTICE: grafana-cli install did not complete. Falling back to direct archive extraction..."
   fi
+fi
+
+if [ "$INSTALLED" -eq 0 ] && command -v grafana-cli >/dev/null 2>&1; then
+  echo "==> Detected legacy grafana-cli. Attempting installation..."
+  if grafana-cli --homepath /usr/share/grafana --pluginUrl "$ZIP_URL" plugins install "$PLUGIN_ID" 2>/dev/null; then
+    INSTALLED=1
+  elif grafana-cli --pluginUrl "$ZIP_URL" plugins install "$PLUGIN_ID" 2>/dev/null; then
+    INSTALLED=1
+  fi
+fi
+
+if [ "$INSTALLED" -eq 0 ]; then
+  echo "NOTICE: CLI installation unavailable or not completed. Using direct release archive extraction..."
 fi
 
 if [ "$INSTALLED" -eq 0 ]; then
