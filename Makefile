@@ -1,4 +1,4 @@
-PLUGIN_ID ?= albertowd-oraclegrafana-datasource
+PLUGIN_ID ?= vinayaksomvanshi-oraclegrafana-datasource
 VERSION ?= $(shell cat package.json | grep '"version"' | head -n1 | cut -d'"' -f4)
 DIST_DIR := dist
 

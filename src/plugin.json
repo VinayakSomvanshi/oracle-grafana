@@ -2,19 +2,19 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "backend": true,
   "dependencies": {
-    "grafanaDependency": ">=9.5.3",
+    "grafanaDependency": ">=10.0.0",
     "plugins": []
   },
   "executable": "gpx_oracle_grafana",
-  "id": "albertowd-oraclegrafana-datasource",
+  "id": "vinayaksomvanshi-oraclegrafana-datasource",
   "info": {
     "author": {
-      "name": "Alberto Wollmann Dietrich",
-      "email": "alberto+git@albertowd.dev",
-      "url": "https://albertowd.dev"
+      "name": "Vinayak Somvanshi",
+      "email": "20104003@apsit.edu.in",
+      "url": "https://github.com/VinayakSomvanshi/oracle-grafana"
     },
-    "description": "An oracle database datasource for grafana",
-    "keywords": ["datasource"],
+    "description": "An Oracle database data source for Grafana",
+    "keywords": ["datasource", "oracle", "sql"],
     "links": [],
     "logos": {
       "small": "img/logo-64.png",
@@ -25,6 +25,6 @@
     "version": "%VERSION%"
   },
   "metrics": true,
-  "name": "Oracle Grafana",
+  "name": "Oracle Data Source",
   "type": "datasource"
 }

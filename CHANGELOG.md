@@ -30,4 +30,4 @@ Modernized release maintained by Vinayak Somvanshi.
 
 ## 1.0.0 (Original Upstream Release)
 
-Initial release by Alberto Wollmann Dietrich as a Datasource with internal backend support.
+Initial release by Open source community as a Datasource with internal backend support.

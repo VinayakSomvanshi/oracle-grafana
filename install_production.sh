@@ -11,7 +11,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIST_DIR="${SCRIPT_DIR}/dist"
-PLUGIN_TARGET="/var/lib/grafana/plugins/albertowd-oraclegrafana-datasource"
+PLUGIN_TARGET="/var/lib/grafana/plugins/vinayaksomvanshi-oraclegrafana-datasource"
 
 if [ ! -d "$DIST_DIR" ]; then
   echo "[*] Dist directory not found. Running 'make dist'..."
@@ -44,7 +44,7 @@ fi
 # Check if signed
 if [ ! -f "$PLUGIN_TARGET/MANIFEST.txt" ]; then
   echo "[!] WARNING: Plugin is not yet signed with a Grafana Access Policy Token."
-  echo "[!] Configuring albertowd-oraclegrafana-datasource in unsigned allowed list..."
+  echo "[!] Configuring vinayaksomvanshi-oraclegrafana-datasource in unsigned allowed list..."
   SYSCONFIG="/etc/sysconfig/grafana-server"
   DEFAULTS="/etc/default/grafana-server"
   TARGET_ENV=""
@@ -55,8 +55,8 @@ if [ ! -f "$PLUGIN_TARGET/MANIFEST.txt" ]; then
   fi
 
   if [ -n "$TARGET_ENV" ]; then
-    if ! grep -q "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS.*albertowd-oraclegrafana-datasource" "$TARGET_ENV"; then
-      echo 'GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=albertowd-oraclegrafana-datasource' >> "$TARGET_ENV"
+    if ! grep -q "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS.*vinayaksomvanshi-oraclegrafana-datasource" "$TARGET_ENV"; then
+      echo 'GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=vinayaksomvanshi-oraclegrafana-datasource' >> "$TARGET_ENV"
     fi
   fi
 else
