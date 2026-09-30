@@ -37,3 +37,4 @@ e2e-results/
 # Custom
 *.tar.gz
 gpx_*
+*.zip

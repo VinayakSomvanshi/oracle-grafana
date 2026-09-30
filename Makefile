@@ -12,7 +12,7 @@ test:
 
 clean:
 	@echo "==> Cleaning build artifacts..."
-	rm -rf $(DIST_DIR) *.tar.gz gpx_*
+	rm -rf $(DIST_DIR) *.tar.gz *.zip gpx_*
 
 build-backend:
 	@echo "==> Building native Linux backend (CGO_ENABLED=0)..."
@@ -46,6 +46,8 @@ sign:
 	npx --yes @grafana/sign-plugin@latest --rootUrls $${GRAFANA_ROOT_URLS:-http://*,https://*}
 
 package:
-	@echo "==> Creating release archive..."
+	@echo "==> Creating release archives..."
 	tar -czf $(PLUGIN_ID)-$(VERSION).tar.gz -C $(DIST_DIR) .
-	@echo "Created $(PLUGIN_ID)-$(VERSION).tar.gz"
+	rm -rf /tmp/$(PLUGIN_ID) && mkdir -p /tmp/$(PLUGIN_ID) && cp -r $(DIST_DIR)/* /tmp/$(PLUGIN_ID)/
+	cd /tmp && zip -q -r $(CURDIR)/$(PLUGIN_ID)-$(VERSION).zip $(PLUGIN_ID) && rm -rf /tmp/$(PLUGIN_ID)
+	@echo "Created $(PLUGIN_ID)-$(VERSION).tar.gz and $(PLUGIN_ID)-$(VERSION).zip"

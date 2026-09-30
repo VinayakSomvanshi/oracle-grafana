@@ -26,41 +26,65 @@ This plugin connects Grafana directly to any Oracle Database instance (11g, 12c,
 
 ## Installation
 
-### Option 1: Direct Pre-Compiled Release Download (Recommended)
+Choose the installation method best suited to your environment:
 
-Pre-built release archives contain all cross-platform backends and the frontend distribution.
+### Method 1: One-Line grafana-cli Install (Fastest for Standalone Servers)
 
-1. Download the latest release archive:
+Use Grafana's built-in CLI to download, verify, and unpack the release directly:
+```bash
+sudo grafana-cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip plugins install oracle-grafana-datasource
+sudo systemctl restart grafana-server
+```
+
+### Method 2: Docker and Container Deployment (Zero-Touch)
+
+Pass the `GF_INSTALL_PLUGINS` environment variable when starting your Grafana container. Grafana automatically installs and activates the plugin upon startup:
+```bash
+docker run -d -p 3000:3000 \
+  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip;oracle-grafana-datasource" \
+  grafana/grafana:latest
+```
+
+In `docker-compose.yaml`:
+```yaml
+services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.zip;oracle-grafana-datasource
+```
+
+### Method 3: One-Line Installer Script
+
+Run the automated installer script via bash:
+```bash
+curl -fsSL https://raw.githubusercontent.com/VinayakSomvanshi/oracle-grafana/main/install.sh | sudo bash
+```
+
+### Method 4: Manual Archive Extraction (Offline / Air-Gapped Environments)
+
+For bastion hosts or environments with restricted internet access:
+
+1. Download the release archive:
    ```bash
-   # Download tarball release
    curl -fSL -o oracle-grafana-datasource-2.0.0.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.0.0.tar.gz
    ```
 
-2. Extract into your Grafana plugins directory (default: `/var/lib/grafana/plugins`):
+2. Extract into your Grafana plugins directory:
    ```bash
    sudo mkdir -p /var/lib/grafana/plugins/oracle-grafana-datasource
    sudo tar -xzf oracle-grafana-datasource-2.0.0.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
    sudo chown -R grafana:grafana /var/lib/grafana/plugins/oracle-grafana-datasource
    ```
 
-3. Restart the Grafana server:
+3. Restart Grafana:
    ```bash
-   # Systemd service
    sudo systemctl restart grafana-server
-
-   # Docker container
-   docker restart grafana
    ```
 
-### Option 2: Automated Local Installation Script
-
-If running on the local machine where the repository was cloned:
-```bash
-sudo ./install_production.sh
-```
-This script detects the Grafana plugin directory, builds or syncs release artifacts, configures file permissions, and prompts to restart the service.
-
-### Option 3: Building from Source
+### Method 5: Building from Source
 
 Prerequisites:
 - Go 1.22 or higher
