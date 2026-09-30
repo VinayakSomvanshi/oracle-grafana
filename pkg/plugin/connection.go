@@ -82,6 +82,13 @@ func (c *OracleDatasourceConnection) PingContext(ctx context.Context) error {
 	return fmt.Errorf("oracle connection is closed")
 }
 
+func (c *OracleDatasourceConnection) Conn(ctx context.Context) (*sql.Conn, error) {
+	if c.connection != nil {
+		return c.connection.Conn(ctx)
+	}
+	return nil, fmt.Errorf("oracle connection is closed")
+}
+
 func (c *OracleDatasourceConnection) Reconnect(settings *OracleDatasourceSettings) error {
 	if c.IsConnected() {
 		_ = c.Disconnect()

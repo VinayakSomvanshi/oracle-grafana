@@ -29,6 +29,7 @@ type OracleDatasourceInfo struct {
 
 // MakeQuery executes a validated, read-only SQL query against the Oracle database
 // with full context cancellation, row-limit circuit breaker, and typed column mapping.
+// Zero database-side modifications or special DBA scripts are required.
 func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasourceConnection) backend.DataResponse {
 	var resp backend.DataResponse
 
@@ -41,25 +42,38 @@ func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasour
 		rawSQL = q.O_sql
 	}
 
-	// 1. Mandatory Pre-Flight Read-Only Validation (Defense Layer 1)
+	// 1. Mandatory In-Plugin Lexer / Read-Only Validation (Layer 1)
 	if err := ValidateReadOnlyQuery(rawSQL); err != nil {
 		log.DefaultLogger.Warn("Query rejected by read-only validator", "error", err, "query", rawSQL)
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Query rejected (read-only compliance): %v", err))
 	}
 
-	// 2. Oracle Database Engine Read-Only Transaction Enforcement (Defense Layer 2)
-	// Even if an obscure SQL or stored function is executed, Oracle kernel blocks data mutation.
-	_, _ = c.connection.ExecContext(ctx, "ALTER SESSION SET TRANSACTION READ ONLY")
+	// 2. Acquire a dedicated connection from the connection pool
+	conn, err := c.Conn(ctx)
+	if err != nil {
+		log.DefaultLogger.Error("Error acquiring database connection from pool", "error", err)
+		return backend.ErrDataResponse(backend.StatusUnknown, fmt.Sprintf("Error acquiring connection: %v", err))
+	}
+	defer conn.Close()
 
-	// 3. Prepare query with Context for cancellation support
-	stmt, err := c.connection.PrepareContext(ctx, rawSQL)
+	// 3. Oracle Database Engine Read-Only Transaction Lock (Layer 2)
+	// Works for ANY Oracle user with standard privileges (no DBA rights needed).
+	// Even if an obscure stored function is executed, Oracle kernel blocks data mutation with ORA-01456.
+	_, _ = conn.ExecContext(ctx, "ALTER SESSION SET TRANSACTION READ ONLY")
+	defer func() {
+		// Cleanly end the transaction before returning the connection to the pool
+		_, _ = conn.ExecContext(context.Background(), "ROLLBACK")
+	}()
+
+	// 4. Prepare query on the dedicated connection with Context for cancellation support
+	stmt, err := conn.PrepareContext(ctx, rawSQL)
 	if err != nil {
 		log.DefaultLogger.Error("Error preparing SQL", "error", err)
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error preparing SQL: %v", err))
 	}
 	defer stmt.Close()
 
-	// 4. Execute query with Context
+	// 5. Execute query on the dedicated connection with Context
 	rows, err := stmt.QueryContext(ctx)
 	if err != nil {
 		log.DefaultLogger.Error("Error executing query", "error", err)
@@ -67,7 +81,7 @@ func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasour
 	}
 	defer rows.Close()
 
-	// 5. Build Column Metadata & Typed Builders
+	// 6. Build Column Metadata & Typed Builders
 	colTypes, err := rows.ColumnTypes()
 	if err != nil {
 		log.DefaultLogger.Error("Error retrieving column types", "error", err)
@@ -79,7 +93,7 @@ func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasour
 		builders[i] = NewColumnBuilder(ct)
 	}
 
-	// 6. Scan Rows with Row Limit Circuit Breaker (OOM Protection)
+	// 7. Scan Rows with Row Limit Circuit Breaker (OOM Protection)
 	scanValues := make([]interface{}, len(colTypes))
 	scanArgs := make([]interface{}, len(colTypes))
 	for i := range scanArgs {
@@ -111,7 +125,7 @@ func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasour
 		return backend.ErrDataResponse(backend.StatusUnknown, fmt.Sprintf("Error during row processing: %v", err))
 	}
 
-	// 7. Construct Grafana DataFrame
+	// 8. Construct Grafana DataFrame
 	frame := data.NewFrame(q.RefId)
 	for _, b := range builders {
 		frame.Fields = append(frame.Fields, b.ToField())
