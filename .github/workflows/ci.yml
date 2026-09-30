@@ -59,7 +59,7 @@ jobs:
       - name: Sign Plugin (if token provided)
         env:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
-          GRAFANA_ROOT_URLS: ${{ secrets.GRAFANA_ROOT_URLS }}
+          GRAFANA_ROOT_URLS: ${{ secrets.GRAFANA_ROOT_URLS || 'http://localhost:3000/,http://*:3000/,https://*:3000/,http://*,https://*' }}
         run: |
           if [ -n "$GRAFANA_ACCESS_POLICY_TOKEN" ]; then
             make sign
