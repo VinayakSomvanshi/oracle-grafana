@@ -106,6 +106,48 @@ make dist
 
 ---
 
+## Uninstallation
+
+To completely remove the plugin from Grafana:
+
+### Method 1: Using Grafana CLI
+```bash
+# Modern Grafana (v10+, v11+, v12+, v13+)
+sudo grafana cli plugins uninstall oracle-grafana-datasource
+
+# Legacy Grafana
+sudo grafana-cli --homepath /usr/share/grafana plugins uninstall oracle-grafana-datasource
+
+# Restart Grafana server
+sudo systemctl restart grafana-server
+```
+
+### Method 2: Manual Directory Removal
+If the plugin was installed manually by extracting an archive:
+```bash
+# Remove plugin directory
+sudo rm -rf /var/lib/grafana/plugins/oracle-grafana-datasource
+
+# Restart Grafana server
+sudo systemctl restart grafana-server
+```
+
+### Method 3: Docker and Container Environments
+1. Remove or unset `GF_INSTALL_PLUGINS` in your container environment or `docker-compose.yaml`.
+2. If using a persistent volume for plugins, remove the directory inside the running container:
+   ```bash
+   docker exec -it <grafana-container-name> grafana cli plugins uninstall oracle-grafana-datasource
+   docker restart <grafana-container-name>
+   ```
+
+### Data Source Instance Cleanup
+After removing the plugin files, remove any configured Oracle data source instances:
+1. In Grafana, navigate to **Connections > Data Sources**.
+2. Click on the Oracle data source entry.
+3. Scroll to the bottom and click **Delete**.
+
+---
+
 ## Plugin Signature and Verification
 
 Official release archives are cryptographically signed using Grafana Labs' official signing tool (`@grafana/sign-plugin`) configured with universal root URL patterns (`http://*`, `https://*`). This signature allows the plugin to load on any hostname or IP address without signature warning barriers.
