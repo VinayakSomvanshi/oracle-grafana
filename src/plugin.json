@@ -12,7 +12,11 @@
       "name": "Oracle Grafana Project"
     },
     "description": "An Oracle database data source for Grafana",
-    "keywords": ["datasource", "oracle", "sql"],
+    "keywords": [
+      "datasource",
+      "oracle",
+      "sql"
+    ],
     "links": [],
     "logos": {
       "small": "img/logo-64.png",
@@ -24,5 +28,6 @@
   },
   "metrics": true,
   "name": "Oracle Data Source",
-  "type": "datasource"
+  "type": "datasource",
+  "alerting": true
 }
