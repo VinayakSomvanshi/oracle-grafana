@@ -55,12 +55,15 @@ jobs:
           make dist
 
       - name: Sign Plugin (if token provided)
-        if: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN != '' }}
         env:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           GRAFANA_ROOT_URLS: ${{ secrets.GRAFANA_ROOT_URLS }}
         run: |
-          make sign
+          if [ -n "$GRAFANA_ACCESS_POLICY_TOKEN" ]; then
+            make sign
+          else
+            echo "Skipping signing: GRAFANA_ACCESS_POLICY_TOKEN secret is not set."
+          fi
 
       - name: Package Release Tarball
         run: |
