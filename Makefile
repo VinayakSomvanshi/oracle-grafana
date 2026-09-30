@@ -43,7 +43,14 @@ sign:
 		echo "To sign: export GRAFANA_ACCESS_POLICY_TOKEN='<your-token>' && make sign"; \
 		exit 1; \
 	fi
-	npx --yes @grafana/sign-plugin@latest --rootUrls "$${GRAFANA_ROOT_URLS:-http://localhost:3000/,http://*:3000/,https://*:3000/,http://*,https://*}"
+	@URLS="$${GRAFANA_ROOT_URLS}"; \
+	if [ -z "$$URLS" ]; then \
+		URLS="http://localhost:3000/,http://*:3000/,https://*:3000/,http://*,https://*"; \
+	elif ! echo "$$URLS" | grep -q "3000"; then \
+		URLS="http://localhost:3000/,http://*:3000/,https://*:3000/,$$URLS"; \
+	fi; \
+	echo "==> Signing with root URLs: $$URLS"; \
+	npx --yes @grafana/sign-plugin@latest --rootUrls "$$URLS"
 
 package:
 	@echo "==> Creating release archives..."
