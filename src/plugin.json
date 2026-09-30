@@ -6,7 +6,7 @@
     "plugins": []
   },
   "executable": "gpx_oracle_grafana",
-  "id": "vinayaksomvanshi-oraclegrafana-datasource",
+  "id": "oracle-grafana-datasource",
   "info": {
     "author": {
       "name": "Vinayak Somvanshi",

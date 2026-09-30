@@ -10,8 +10,8 @@ npm ci && npm run build && mage -v
 # Make distribution files
 echo "Compacting release files..."
 cd ./dist/
-tar --exclude="gpx*arm*" -cvzf ../vinayaksomvanshi-oraclegrafana-datasource-bundle-${PKG_VERSION}.tar.gz ./
-tar --exclude="gpx*arm*" --exclude="gpx*linux*" --exclude="gpx*windows*" -cvzf ../vinayaksomvanshi-oraclegrafana-datasource-darwin-amd64-${PKG_VERSION}.tar.gz ./
-tar --exclude="gpx*arm*" --exclude="gpx*darwin*" --exclude="gpx*windows*" -cvzf ../vinayaksomvanshi-oraclegrafana-datasource-linux-amd64-${PKG_VERSION}.tar.gz ./
-tar --exclude="gpx*arm*" --exclude="gpx*darwin*" --exclude="gpx*linux*" -cvzf ../vinayaksomvanshi-oraclegrafana-datasource-windows-amd64-${PKG_VERSION}.tar.gz ./
+tar --exclude="gpx*arm*" -cvzf ../oracle-grafana-datasource-bundle-${PKG_VERSION}.tar.gz ./
+tar --exclude="gpx*arm*" --exclude="gpx*linux*" --exclude="gpx*windows*" -cvzf ../oracle-grafana-datasource-darwin-amd64-${PKG_VERSION}.tar.gz ./
+tar --exclude="gpx*arm*" --exclude="gpx*darwin*" --exclude="gpx*windows*" -cvzf ../oracle-grafana-datasource-linux-amd64-${PKG_VERSION}.tar.gz ./
+tar --exclude="gpx*arm*" --exclude="gpx*darwin*" --exclude="gpx*linux*" -cvzf ../oracle-grafana-datasource-windows-amd64-${PKG_VERSION}.tar.gz ./
 cd ../
