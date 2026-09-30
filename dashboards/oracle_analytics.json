@@ -21,7 +21,7 @@
       "type": "datasource",
       "id": "oracle-grafana-datasource",
       "name": "Oracle Data Source",
-      "version": "2.0.0"
+      "version": "2.1.0"
     }
   ],
   "annotations": {

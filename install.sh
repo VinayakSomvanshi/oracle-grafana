@@ -6,7 +6,7 @@ set -e
 #   curl -fsSL https://raw.githubusercontent.com/VinayakSomvanshi/oracle-grafana/main/install.sh | sudo bash
 
 PLUGIN_ID="oracle-grafana-datasource"
-VERSION="2.0.0"
+VERSION="2.1.0"
 ZIP_URL="https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/${PLUGIN_ID}-${VERSION}.zip"
 TAR_URL="https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/${PLUGIN_ID}-${VERSION}.tar.gz"
 

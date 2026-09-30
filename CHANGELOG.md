@@ -1,5 +1,22 @@
 # Oracle Grafana Changelog
 
+## 2.1.0
+
+Release with expanded signing coverage, automated zip distribution, one-line installer, and sample analytics dashboard.
+
+### Packaging & Distribution
+- **Dual Archive Packaging**: Automated both `.tar.gz` and `.zip` distribution packages across all releases.
+- **Port 3000 Wildcard Signing**: Expanded cryptographic signature to explicitly cover port 3000 (`http://localhost:3000/`, `http://*:3000/`, `https://*:3000/`) allowing out-of-the-box loading on standard Grafana instances without `allow_loading_unsigned_plugins`.
+- **One-Command CLI Installation**: Fully supported `grafana cli plugins install --pluginUrl ...` directly from GitHub releases.
+- **Automated Installer**: Added standalone `install.sh` with automatic Grafana environment detection, permission configuration, and restart instructions.
+
+### Documentation & Dashboards
+- **Sample Analytics Dashboard**: Added a comprehensive sample dashboard (`dashboards/oracle_analytics.json`) featuring KPI stat cards, analytic moving average time series, status gauges, raw tables with health badges, and live Oracle data dictionary monitoring.
+- **Uninstallation Guide**: Added complete uninstallation procedures for Grafana CLI, manual directories, and Docker containers.
+- **ASCII & Quality Standards**: Cleaned all documentation to 100% clean ASCII.
+
+---
+
 ## 2.0.0
 
 Modernized release with strict read-only security engine.
