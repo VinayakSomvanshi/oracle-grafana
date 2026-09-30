@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Production Installer for Hardened Oracle Grafana DataSource
+# Production Installer for Oracle Grafana DataSource
 # =============================================================================
 set -euo pipefail
 

@@ -4,7 +4,7 @@
 -- Run as SYSDBA or SYSTEM connected to the application PDB (e.g. FREEPDB1)
 -- ============================================================================
 
--- 1. Create a Hardened Resource Profile (Prevents Runaway Queries & Resource Exhaustion)
+-- 1. Create a Resource Profile (Prevents Runaway Queries & Resource Exhaustion)
 BEGIN
   EXECUTE IMMEDIATE 'DROP PROFILE c_grafana_profile CASCADE';
 EXCEPTION

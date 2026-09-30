@@ -1,4 +1,4 @@
-# Hardened Oracle Database DataSource for Grafana
+# Oracle Database Data Source for Grafana
 
 [![CI & Release Pipeline](https://github.com/VinayakSomvanshi/oracle-grafana/actions/workflows/ci.yml/badge.svg)](https://github.com/VinayakSomvanshi/oracle-grafana/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/VinayakSomvanshi/oracle-grafana)](https://goreportcard.com/report/github.com/VinayakSomvanshi/oracle-grafana)
@@ -12,27 +12,27 @@ This plugin connects Grafana directly to any Oracle Database (19c, 21c, 23ai, 26
 
 ## Zero Database Configuration
 
-You do **not** need DBA access, special privileges, or database-side scripts.
+You do not need DBA access, elevated privileges, or database-side scripts.
 
 1. Install the plugin.
 2. In Grafana, provide your existing Oracle host, port, service name, username, and password.
 3. Click **Save & Test**.
 
-The plugin automatically locks every query execution session to read-only mode (`ALTER SESSION SET TRANSACTION READ ONLY`). Even if you connect using a user account that has write or administrative permissions, the database engine itself rejects any write or mutation attempt.
+The plugin automatically locks each query execution session to read-only mode (`ALTER SESSION SET TRANSACTION READ ONLY`). Even if you connect using an account with table write permissions, the database engine itself rejects any data modification attempt.
 
 ---
 
-## Key Features & Production Hardening
+## Key Features
 
 - **Automatic Read-Only Enforcement**: Two-tier protection engine:
-  - In-plugin SQL lexer strips comments and enforces that queries start strictly with SELECT or WITH.
-  - Automatic session transaction locking ensures the Oracle database kernel blocks any modification attempt (ORA-01456).
-- **Pure-Go Driver**: Built on sijms/go-ora/v2 with CGO_ENABLED=0. Requires no Oracle Instant Client RPMs or shared C library dependencies.
-- **Native Data Types**: Converts Oracle types (NUMBER, DATE, TIMESTAMP, VARCHAR2) to native Grafana typed DataFrame vectors for instant time-series rendering.
-- **Circuit Breaker**: Enforces a 50,000 max row limit with frame warning notices to prevent Out-Of-Memory (OOM) crashes on Grafana.
+  - In-plugin SQL lexer strips comments and verifies queries start strictly with `SELECT` or `WITH`.
+  - Automatic session transaction locking ensures the Oracle database kernel blocks any modification attempt (`ORA-01456`).
+- **Pure-Go Driver**: Built on `sijms/go-ora/v2` with `CGO_ENABLED=0`. Requires no Oracle Instant Client RPMs or shared C library dependencies.
+- **Native Data Types**: Converts Oracle types (`NUMBER`, `DATE`, `TIMESTAMP`, `VARCHAR2`) to native Grafana typed DataFrame vectors for instant time-series rendering.
+- **Circuit Breaker**: Enforces a 50,000 max row limit with frame warning notices to prevent Out-Of-Memory (OOM) conditions.
 - **Context Cancellation**: Full propagation of Grafana cancellation contexts to Oracle. When a panel times out or a tab closes, the query terminates in Oracle immediately.
-- **Cross-Platform**: Pre-compiled for Linux (amd64, arm64), macOS (Intel, Apple Silicon M1-M4), and Windows.
-- **Zero CVEs**: Audited and verified with govulncheck.
+- **Cross-Platform**: Pre-compiled for Linux (amd64, arm64), macOS (Intel, Apple Silicon), and Windows.
+- **Zero Vulnerabilities**: Audited and verified with `govulncheck`.
 
 ---
 
@@ -63,9 +63,9 @@ sudo ./install_production.sh
 
 ## Signing the Plugin (Optional / Production)
 
-To eliminate the need for allow_loading_unsigned_plugins:
-1. Create a free organization account on [Grafana.com](https://grafana.com).
-2. Generate an Access Policy Token with the plugins:write scope.
+To eliminate the need for `allow_loading_unsigned_plugins`:
+1. Create an organization account on [Grafana.com](https://grafana.com).
+2. Generate an Access Policy Token with the `plugins:write` scope.
 3. Sign the plugin:
    ```bash
    export GRAFANA_ACCESS_POLICY_TOKEN="<your-token>"
