@@ -1,0 +1,835 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ORACLE",
+      "label": "Oracle Data Source",
+      "description": "Oracle Database Data Source (Read-Only)",
+      "type": "datasource",
+      "pluginId": "oracle-grafana-datasource",
+      "pluginName": "Oracle Data Source"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "oracle-grafana-datasource",
+      "name": "Oracle Data Source",
+      "version": "2.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "title": "Key Metric Performance Indicators (metrics_test)",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Latest Value",
+      "description": "Most recent reading in the selected time window",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test WHERE ts IS NOT NULL) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Average Value",
+      "description": "Arithmetic mean of all values in the selected window",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT ROUND(AVG(val), 2) AS avg_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Peak (Max) Value",
+      "description": "Maximum recorded metric value in the selected window",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT MAX(val) AS max_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Total Observations",
+      "description": "Total count of metric records processed",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT COUNT(*) AS total_count FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 101,
+      "title": "Time Series Trends & Analytics",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Metric Trend & Moving Average",
+      "description": "Native typed time-series vector with Oracle analytic moving average window (no Grafana field type conversion needed)",
+      "gridPos": {
+        "h": 9,
+        "w": 18,
+        "x": 0,
+        "y": 6
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT ts_utc AS ts, val, ROUND(AVG(val) OVER (ORDER BY ts_utc ROWS BETWEEN 5 PRECEDING AND CURRENT ROW), 1) AS moving_avg FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc ASC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 5
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MOVING_AVG"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    4,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "gauge",
+      "title": "Current Status Gauge",
+      "description": "Latest metric value plotted against operational thresholds",
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 6
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test WHERE val IS NOT NULL) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "auto",
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 102,
+      "title": "Detailed Observations & Distribution",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Raw Metric Records (Filtered & Ordered)",
+      "description": "Paginated, searchable raw metric table demonstrating native typed column projection (VARCHAR2, DATE, NUMBER)",
+      "gridPos": {
+        "h": 9,
+        "w": 16,
+        "x": 0,
+        "y": 16
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT ts_utc AS \"Timestamp (UTC)\", val AS \"Metric Value\", CASE WHEN val >= 85 THEN 'Critical' WHEN val >= 70 THEN 'Warning' ELSE 'Normal' END AS \"Health Status\" FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST ${row_limit} ROWS ONLY"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metric Value"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 85
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Health Status"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Normal": {
+                        "color": "green"
+                      },
+                      "Warning": {
+                        "color": "orange"
+                      },
+                      "Critical": {
+                        "color": "red"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "footer": {
+          "countRows": true,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Timestamp (UTC)"
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": "bargauge",
+      "title": "Value Range Distribution",
+      "description": "Bucketed distribution calculated natively inside Oracle SQL",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT bucket_range AS \"Range\", COUNT(*) AS \"Count\" FROM (SELECT CASE WHEN val < 50 THEN '0 - 49 (Low)' WHEN val < 75 THEN '50 - 74 (Medium)' WHEN val < 90 THEN '75 - 89 (High)' ELSE '90+ (Critical)' END AS bucket_range FROM metrics_test WHERE val IS NOT NULL) GROUP BY bucket_range ORDER BY bucket_range ASC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "displayMode": "gradient"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "showUnfilled": true
+      }
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 103,
+      "title": "Oracle Engine & Database Health (Live Data Dictionary)",
+      "type": "row",
+      "panels": [
+        {
+          "id": 9,
+          "type": "table",
+          "title": "Database Instance & Storage Overview",
+          "description": "Live query against Oracle v$instance and data dictionary views, executed safely under read-only session isolation",
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 0,
+            "y": 26
+          },
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "oracle-grafana-datasource",
+                "uid": "${DS_ORACLE}"
+              },
+              "o_sql": "SELECT instance_name AS \"Instance\", host_name AS \"Host\", version AS \"Oracle Version\", status AS \"Status\", archiver AS \"Archiver\" FROM v$instance"
+            }
+          ],
+          "options": {
+            "footer": {
+              "show": false
+            }
+          }
+        },
+        {
+          "id": 10,
+          "type": "bargauge",
+          "title": "Active vs Inactive Sessions",
+          "description": "Real-time session breakdown from Oracle v$session",
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 12,
+            "y": 26
+          },
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "oracle-grafana-datasource",
+                "uid": "${DS_ORACLE}"
+              },
+              "o_sql": "SELECT status AS \"Session Status\", COUNT(*) AS \"Count\" FROM v$session WHERE type = 'USER' GROUP BY status ORDER BY COUNT(*) DESC"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "displayMode": "basic"
+              }
+            }
+          },
+          "options": {
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "showUnfilled": true
+          }
+        }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "oracle",
+    "database",
+    "read-only"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "50",
+          "value": "50"
+        },
+        "description": "Max rows to fetch in the detailed table panel",
+        "hide": 0,
+        "label": "Table Row Limit",
+        "name": "row_limit",
+        "options": [
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": true,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "25, 50, 100, 250, 500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Oracle Database & Metric Analytics",
+  "uid": "oracle-metric-analytics",
+  "version": 1
+}
