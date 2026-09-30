@@ -43,7 +43,7 @@ sign:
 		echo "To sign: export GRAFANA_ACCESS_POLICY_TOKEN='<your-token>' && make sign"; \
 		exit 1; \
 	fi
-	npx --yes @grafana/sign-plugin@latest --rootUrls $${GRAFANA_ROOT_URLS:-http://localhost:3000,http://127.0.0.1:3000}
+	npx --yes @grafana/sign-plugin@latest --rootUrls $${GRAFANA_ROOT_URLS:-http://*,https://*}
 
 package:
 	@echo "==> Creating release archive..."
