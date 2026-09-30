@@ -1,56 +1,33 @@
 # Oracle Grafana Changelog
 
-## 1.0.0 (Unreleased)
+## 2.0.0 (Hardened Enterprise Edition)
 
-Initial release as a Datasource with internal backend support.
+Hardened and modernized fork maintained by Vinayak Somvanshi.
 
-### Added
-* Github Actions for making releases
-* Scripts to make release files and update dev containers
-* Support for variables on queries
-* Support for Query variables
+### Security & Compliance
+- **3-Tier Read-Only Defense Engine**:
+  - Implemented SQL Lexer/Sanitizer that strips comments and string literals, and enforces statements starting strictly with `SELECT` or `WITH`.
+  - Prohibited statement chaining and multi-statement execution via internal semicolons.
+  - Prohibited mutating DDL/DML statements (`INSERT`, `UPDATE`, `DELETE`, `DROP`, `ALTER`, `TRUNCATE`, `MERGE`, `CREATE`, `RENAME`, `GRANT`, `REVOKE`).
+  - Prohibited PL/SQL execution (`BEGIN`, `DECLARE`, `EXECUTE`, `CALL`).
+  - Pre-flight `ALTER SESSION SET TRANSACTION READ ONLY` on each query execution to enforce database kernel-level mutation blocks (`ORA-01456`).
+- **Context Cancellation**: Fully wired `context.Context` to `PrepareContext` and `QueryContext` to abort queries in Oracle when Grafana panels timeout or tabs close.
+- **Circuit Breaker**: Added a 50,000 maximum row limit with frame warning notices (`data.Notice`) to prevent Out-Of-Memory (OOM) crashes.
+- **Vulnerability Remediation**: Updated dependencies to resolve all known CVEs (`govulncheck` verified: 0 CVEs).
 
-### Removed
-* Dockerfile
-* GitLab CI/CD
-* NodeJs external service
-* Pod for develop
-* SonarQube scan (for now)
+### Performance & Engine
+- **Native Type Scanner**: Replaced stringified column scanning with native typed DataFrame builder (`*float64`, `*time.Time`, `*string`, `*bool`).
+- **Modern SDK**: Upgraded `github.com/grafana/grafana-plugin-sdk-go` to `v0.296.5` and `go-ora` to `v2.9.0`.
+- **Pure-Go Compilation**: Completely CGO-free (`CGO_ENABLED=0`) cross-compilation for Linux, macOS, and Windows.
+- **Connection Pooling**: Configured max open, idle, and lifetime connection pool settings.
 
-### Updated
-* CHANGELOG file
-* Config editor refactor to group information
-* Docker compose file to develop
-* Examples images
-* Grafana framework
-* Libraries
-* README file
-* Query editor refactor with SQL preview
-
-## 0.9.0 (unreleased)
-
-Import from https://github.com/JamesOsgood/mongodb-grafana
-
-### Added
-* Simple SELECT queries now works
-* Dockerfile for containering
-* Entire server rewrite using ES2020
-* Examples with images and queries
-* GitLab CI/CD
-* Lint scan
-* Oracle driver
-* Winston/Morgan logger
-* Pod for develop
-* SonarQube scan
-
-### Removed
-* MongoDb driver
-
-### Updated
-* Lib updates
+### Operations
+- Added production Oracle setup script (`oracle/setup_production.sql`) with hardened profile limits (`c_grafana_profile`).
+- Added automated CI/CD pipeline (`.github/workflows/ci.yml`) with automated vulnerability checks, cross-compilation, and Grafana signing.
+- Added production host installer (`install_production.sh`).
 
 ---
-# TODO
-* SonarQube scan
-* Real tests
-* Multiple value variables
+
+## 1.0.0 (Original Upstream Release)
+
+Initial release by Alberto Wollmann Dietrich as a Datasource with internal backend support.

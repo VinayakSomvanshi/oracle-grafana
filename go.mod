@@ -1,4 +1,4 @@
-module github.com/albertowd/oracle-grafana
+module github.com/VinayakSomvanshi/oracle-grafana
 
 go 1.26.5
 
