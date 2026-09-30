@@ -71,4 +71,4 @@ if command -v systemctl >/dev/null 2>&1; then
   journalctl -u grafana-server --since "1 minute ago" --no-pager | grep -i -E "oracle|plugin" | tail -n 15 || true
 fi
 
-echo "[✓] Installation complete. Open Grafana > Connections > Data Sources > Oracle to configure."
+echo "[+] Installation complete. Open Grafana > Connections > Data Sources > Oracle to configure."
