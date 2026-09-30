@@ -1,5 +1,14 @@
 # Oracle Grafana Changelog
 
+## 2.1.1
+
+Maintenance release enabling Grafana Alerting integration.
+
+### Features & Integrations
+- **Grafana Alerting Support**: Enabled alerting capability in plugin metadata (`"alerting": true`), allowing Grafana unified alerting rules to evaluate Oracle queries directly in the background.
+
+---
+
 ## 2.1.0
 
 Release with expanded signing coverage, automated zip distribution, one-line installer, and sample analytics dashboard.

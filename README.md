@@ -33,10 +33,10 @@ Choose the installation method best suited to your environment:
 Use Grafana's built-in CLI subcommand to download, verify, and unpack the release directly:
 ```bash
 # Modern Grafana (v10+, v11+, v12+, v13+)
-sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.0.zip plugins install oracle-grafana-datasource
+sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip plugins install oracle-grafana-datasource
 
 # Legacy Grafana
-sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.0.zip plugins install oracle-grafana-datasource
+sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip plugins install oracle-grafana-datasource
 
 # Restart Grafana
 sudo systemctl restart grafana-server
@@ -47,7 +47,7 @@ sudo systemctl restart grafana-server
 Pass the `GF_INSTALL_PLUGINS` environment variable when starting your Grafana container. Grafana automatically installs and activates the plugin upon startup:
 ```bash
 docker run -d -p 3000:3000 \
-  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.0.zip;oracle-grafana-datasource" \
+  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip;oracle-grafana-datasource" \
   grafana/grafana:latest
 ```
 
@@ -59,7 +59,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.0.zip;oracle-grafana-datasource
+      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip;oracle-grafana-datasource
 ```
 
 ### Method 3: One-Line Installer Script
@@ -75,13 +75,13 @@ For bastion hosts or environments with restricted internet access:
 
 1. Download the release archive:
    ```bash
-   curl -fSL -o oracle-grafana-datasource-2.1.0.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.0.tar.gz
+   curl -fSL -o oracle-grafana-datasource-2.1.1.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.tar.gz
    ```
 
 2. Extract into your Grafana plugins directory:
    ```bash
    sudo mkdir -p /var/lib/grafana/plugins/oracle-grafana-datasource
-   sudo tar -xzf oracle-grafana-datasource-2.1.0.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
+   sudo tar -xzf oracle-grafana-datasource-2.1.1.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
    sudo chown -R grafana:grafana /var/lib/grafana/plugins/oracle-grafana-datasource
    ```
 
