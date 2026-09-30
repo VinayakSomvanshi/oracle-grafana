@@ -1,7 +1,6 @@
 # Oracle Database Data Source for Grafana
 
 [![CI & Release Pipeline](https://github.com/VinayakSomvanshi/oracle-grafana/actions/workflows/ci.yml/badge.svg)](https://github.com/VinayakSomvanshi/oracle-grafana/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/VinayakSomvanshi/oracle-grafana)](https://goreportcard.com/report/github.com/VinayakSomvanshi/oracle-grafana)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 An enterprise-ready, zero-configuration, strictly read-only **Oracle Database Data Source for Grafana OSS**.

@@ -2,7 +2,7 @@
 
 ## 2.0.0
 
-Modernized release maintained by Vinayak Somvanshi.
+Modernized release with strict read-only security engine.
 
 ### Security & Compliance
 - **3-Tier Read-Only Defense Engine**:

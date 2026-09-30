@@ -9,9 +9,7 @@
   "id": "oracle-grafana-datasource",
   "info": {
     "author": {
-      "name": "Vinayak Somvanshi",
-      "email": "20104003@apsit.edu.in",
-      "url": "https://github.com/VinayakSomvanshi/oracle-grafana"
+      "name": "Oracle Grafana Project"
     },
     "description": "An Oracle database data source for Grafana",
     "keywords": ["datasource", "oracle", "sql"],
