@@ -24,6 +24,24 @@ func (c *OracleDatasourceConnection) Connect(settings *OracleDatasourceSettings)
 			urlOptions["SID"] = settings.O_sid
 		}
 
+		// Configure TLS / SSL (TCPS)
+		if settings.O_tls {
+			urlOptions["SSL"] = "TRUE"
+			if settings.O_tlsVerify {
+				urlOptions["SSL VERIFY"] = "TRUE"
+			} else {
+				urlOptions["SSL VERIFY"] = "FALSE"
+			}
+		}
+
+		// Configure Oracle Wallet (for OCI Autonomous Database / ATP / ADW)
+		if len(settings.O_walletPath) > 0 {
+			urlOptions["WALLET"] = settings.O_walletPath
+			if len(settings.O_walletPassword) > 0 {
+				urlOptions["WALLET PASSWORD"] = settings.O_walletPassword
+			}
+		}
+
 		if len(settings.O_connStr) > 0 {
 			connectionString = go_ora.BuildJDBC(settings.O_user, settings.O_password, settings.O_connStr, urlOptions)
 		} else {
@@ -32,7 +50,10 @@ func (c *OracleDatasourceConnection) Connect(settings *OracleDatasourceSettings)
 
 		masked := connectionString
 		if len(settings.O_password) > 0 {
-			masked = strings.Replace(connectionString, settings.O_password, "********", 1)
+			masked = strings.Replace(masked, settings.O_password, "********", 1)
+		}
+		if len(settings.O_walletPassword) > 0 {
+			masked = strings.Replace(masked, settings.O_walletPassword, "********", 1)
 		}
 		log.DefaultLogger.Debug("Connecting to Oracle:", "connStr", masked)
 

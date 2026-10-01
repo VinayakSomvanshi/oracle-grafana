@@ -2,7 +2,10 @@ package plugin
 
 import (
 	"testing"
+	"strings"
 	"time"
+
+	go_ora "github.com/sijms/go-ora/v2"
 )
 
 func TestTypedColumnBuilderNumber(t *testing.T) {
@@ -61,5 +64,51 @@ func TestTypedColumnBuilderTime(t *testing.T) {
 	f := b.ToField()
 	if f.Len() != 3 {
 		t.Errorf("expected field len 3, got %d", f.Len())
+	}
+}
+
+
+func TestTypedColumnBuilderLOBAndStrings(t *testing.T) {
+	b := &TypedColumnBuilder{Name: "content", Kind: KindString}
+	b.Append("plain text")
+	b.Append([]byte("byte string"))
+	b.Append(go_ora.Clob{String: "clob content", Valid: true})
+	b.Append(&go_ora.Clob{String: "ptr clob content", Valid: true})
+	b.Append(go_ora.Blob{Data: []byte("blob bytes")})
+	b.Append(&go_ora.Blob{Data: []byte("ptr blob bytes")})
+	b.Append(strings.NewReader("reader content"))
+	b.Append(nil)
+
+	if len(b.Strings) != 8 {
+		t.Fatalf("expected 8 items, got %d", len(b.Strings))
+	}
+	if *b.Strings[0] != "plain text" {
+		t.Errorf("expected 'plain text', got %v", *b.Strings[0])
+	}
+	if *b.Strings[1] != "byte string" {
+		t.Errorf("expected 'byte string', got %v", *b.Strings[1])
+	}
+	if *b.Strings[2] != "clob content" {
+		t.Errorf("expected 'clob content', got %v", *b.Strings[2])
+	}
+	if *b.Strings[3] != "ptr clob content" {
+		t.Errorf("expected 'ptr clob content', got %v", *b.Strings[3])
+	}
+	if *b.Strings[4] != "blob bytes" {
+		t.Errorf("expected 'blob bytes', got %v", *b.Strings[4])
+	}
+	if *b.Strings[5] != "ptr blob bytes" {
+		t.Errorf("expected 'ptr blob bytes', got %v", *b.Strings[5])
+	}
+	if *b.Strings[6] != "reader content" {
+		t.Errorf("expected 'reader content', got %v", *b.Strings[6])
+	}
+	if b.Strings[7] != nil {
+		t.Errorf("expected nil for 8th item, got %v", b.Strings[7])
+	}
+
+	f := b.ToField()
+	if f.Len() != 8 {
+		t.Errorf("expected field len 8, got %d", f.Len())
 	}
 }

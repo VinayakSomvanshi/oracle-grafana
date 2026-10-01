@@ -33,10 +33,10 @@ Choose the installation method best suited to your environment:
 Use Grafana's built-in CLI subcommand to download, verify, and unpack the release directly:
 ```bash
 # Modern Grafana (v10+, v11+, v12+, v13+)
-sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip plugins install oracle-grafana-datasource
+sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip plugins install oracle-grafana-datasource
 
 # Legacy Grafana
-sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip plugins install oracle-grafana-datasource
+sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip plugins install oracle-grafana-datasource
 
 # Restart Grafana
 sudo systemctl restart grafana-server
@@ -47,7 +47,7 @@ sudo systemctl restart grafana-server
 Pass the `GF_INSTALL_PLUGINS` environment variable when starting your Grafana container. Grafana automatically installs and activates the plugin upon startup:
 ```bash
 docker run -d -p 3000:3000 \
-  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip;oracle-grafana-datasource" \
+  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip;oracle-grafana-datasource" \
   grafana/grafana:latest
 ```
 
@@ -59,7 +59,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip;oracle-grafana-datasource
+      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip;oracle-grafana-datasource
 ```
 
 ### Method 3: One-Line Installer Script
@@ -75,13 +75,13 @@ For bastion hosts or environments with restricted internet access:
 
 1. Download the release archive:
    ```bash
-   curl -fSL -o oracle-grafana-datasource-2.1.2.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.tar.gz
+   curl -fSL -o oracle-grafana-datasource-2.2.0.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.tar.gz
    ```
 
 2. Extract into your Grafana plugins directory:
    ```bash
    sudo mkdir -p /var/lib/grafana/plugins/oracle-grafana-datasource
-   sudo tar -xzf oracle-grafana-datasource-2.1.2.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
+   sudo tar -xzf oracle-grafana-datasource-2.2.0.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
    sudo chown -R grafana:grafana /var/lib/grafana/plugins/oracle-grafana-datasource
    ```
 
@@ -182,13 +182,35 @@ Then restart your Grafana server.
    - **Service / SID**: Oracle service name (e.g., `ORCL`, `FREEPDB1`) or SID.
    - **User**: Any standard Oracle database user.
    - **Password**: User password.
+   - **Security & Oracle Cloud (OCI)**:
+     - **Enable TLS / SSL**: Encrypt network traffic using TCPS (required for Oracle Autonomous Database / ATP / ADW on OCI).
+     - **Verify Certificate**: Validate server TLS certificate against trusted CAs.
+     - **Wallet Path**: Path on the Grafana server to directory containing `cwallet.sso` or `ewallet.p12`.
+     - **Wallet Password**: Optional password to decrypt `ewallet.p12` PKCS#12 wallet files.
    - **Connection Pool Settings**:
-     - **Max Open Connections**: Maximum active connections in pool (default: `5`).
-     - **Max Idle Connections**: Maximum idle connections retained (default: `2`).
-     - **Connection Max Lifetime**: Maximum connection lifetime in seconds (default: `14400` / 4 hours).
+     - **Max Open Connections**: Maximum active connections in pool (default: `25`).
+     - **Max Idle Connections**: Maximum idle connections retained (default: `5`).
+     - **Connection Max Lifetime**: Maximum connection lifetime in seconds (default: `1800` / 30 minutes).
 5. Click **Save & Test**. Grafana performs an immediate health check (`SELECT 1 FROM DUAL` within a read-only session) to verify listener reachability, authentication, and read-only policy enforcement.
 
 ---
+
+
+---
+
+## Supported Oracle Data Types
+
+The datasource automatically converts Oracle database types into native Grafana DataFrame vector fields:
+
+| Oracle Data Type | Grafana Field Type | Notes |
+| :--- | :--- | :--- |
+| `NUMBER`, `FLOAT`, `DOUBLE`, `INT`, `DECIMAL` | `Number` (`float64`) | Exact numeric values and floating-point metrics |
+| `DATE`, `TIMESTAMP`, `TIMESTAMP WITH TIME ZONE` | `Time` (`time.Time`) | Parsed into UTC time vectors for graphs and alerts |
+| `VARCHAR2`, `CHAR`, `NVARCHAR2`, `RAW` | `String` | Text values, labels, and status strings |
+| `CLOB`, `NCLOB`, `XMLTYPE` | `String` | Unbounded character large objects streamed into strings |
+| `BLOB` | `String` | Raw binary payloads converted to string representations |
+| `JSON` (Oracle 21c, 23ai, 26ai) | `String` | Native Oracle JSON documents formatted as text |
+| `BOOLEAN` (Oracle 23ai+) | `Boolean` (`bool`) | Native boolean flags mapped to true/false fields |
 
 ## Querying Oracle in Grafana Panels
 

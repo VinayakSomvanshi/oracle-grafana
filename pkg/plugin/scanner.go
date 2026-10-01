@@ -3,11 +3,13 @@ package plugin
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+	go_ora "github.com/sijms/go-ora/v2"
 )
 
 type ColumnKind int
@@ -141,13 +143,39 @@ func (b *TypedColumnBuilder) Append(raw interface{}) {
 		}
 		b.Bools = append(b.Bools, &bVal)
 
-	default: // KindString
+	default: // KindString (VARCHAR, CHAR, CLOB, NCLOB, BLOB, JSON, XMLTYPE)
 		var str string
 		switch v := raw.(type) {
 		case []byte:
 			str = string(v)
 		case string:
 			str = v
+		case go_ora.Clob:
+			if v.Valid {
+				str = v.String
+			}
+		case *go_ora.Clob:
+			if v != nil && v.Valid {
+				str = v.String
+			}
+		case go_ora.NClob:
+			if v.Valid {
+				str = v.String
+			}
+		case *go_ora.NClob:
+			if v != nil && v.Valid {
+				str = v.String
+			}
+		case go_ora.Blob:
+			str = string(v.Data)
+		case *go_ora.Blob:
+			if v != nil {
+				str = string(v.Data)
+			}
+		case io.Reader:
+			buf := new(strings.Builder)
+			_, _ = io.Copy(buf, v)
+			str = buf.String()
 		case time.Time:
 			str = v.Format(time.RFC3339)
 		default:

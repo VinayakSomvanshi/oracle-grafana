@@ -1,5 +1,23 @@
 # Oracle Grafana Changelog
 
+## 2.2.0
+
+Major feature release introducing Oracle Cloud (OCI) Autonomous Database support, Monaco SQL CodeEditor, Oracle Wallet mTLS, dual-column template variables, and rich LOB/JSON data type handling.
+
+### Cloud & Enterprise Connectivity (Tier 2)
+- **Oracle Cloud (OCI) & Autonomous Database Support**: Added native TCPS (TLS) encryption and Oracle Wallet configuration for OCI ATP/ADW instances.
+- **Oracle Wallet Management**: Added support for auto-login `cwallet.sso` and password-protected `ewallet.p12` PKCS#12 wallet files.
+- **LOB & JSON Scanning**: Transparently stream `CLOB`, `NCLOB`, `BLOB`, `XMLTYPE`, and Oracle 21c/23ai/26ai native `JSON` columns into Grafana string fields without memory corruption or truncation.
+- **Secret Masking**: Ensured both database and wallet passwords are securely encrypted in `secureJsonData` and masked in logs.
+
+### User Experience & Editor (Tier 1)
+- **Monaco SQL CodeEditor**: Replaced plain `<TextArea>` with Grafana's Monaco editor featuring full SQL syntax coloring, line numbers, word-wrap, and auto-indentation.
+- **Quick Macros Bar**: Added interactive buttons for 1-click insertion of `$__timeFilter(ts)`, `$__timeFrom()`, `$__timeTo()`, and `$__interval_ms`.
+- **Dual-Column Variable Mapping**: Upgraded `metricFindQuery` to support Grafana standard `__text` and `__value` aliases with case-insensitive matching for human-friendly dropdowns.
+- **Collapsible Query Preview**: Moved client-interpolated SQL preview into a collapsible drawer to maximize panel editing real estate.
+
+---
+
 ## 2.1.2
 
 Feature and stability release introducing native backend macro interpolation for Grafana Alerting and universal Oracle defaults.

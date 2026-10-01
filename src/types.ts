@@ -15,6 +15,10 @@ export interface MyDataSourceOptions extends DataSourceJsonData {
   o_service?: string;
   o_sid?: string;
   o_user?: string;
+  // TLS and Oracle Wallet options (for OCI Autonomous DB and encrypted connections)
+  o_tls?: boolean;
+  o_tlsVerify?: boolean;
+  o_walletPath?: string;
 };
 
 /**
@@ -22,4 +26,5 @@ export interface MyDataSourceOptions extends DataSourceJsonData {
  */
 export interface MySecureJsonData {
   o_password?: string;
+  o_walletPassword?: string;
 };
