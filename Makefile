@@ -45,7 +45,7 @@ sign:
 	fi
 	@URLS="$${GRAFANA_ROOT_URLS}"; \
 	if [ -z "$$URLS" ]; then \
-		URLS="http://localhost:3000/,http://*:3000/,https://*:3000/,http://*,https://*"; \
+		URLS="http://localhost:3000/,http://*:3000/,https://*:3000/,http://localhost:8080/,http://*:8080/,https://*:8080/,http://localhost:8443/,http://*:8443/,https://*:8443/,http://localhost:9000/,http://*:9000/,https://*:9000/,http://localhost:3001/,http://*:3001/,https://*:3001/,http://*,https://*"; \
 	elif ! echo "$$URLS" | grep -q "3000"; then \
 		URLS="http://localhost:3000/,http://*:3000/,https://*:3000/,$$URLS"; \
 	fi; \

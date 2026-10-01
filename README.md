@@ -150,14 +150,24 @@ After removing the plugin files, remove any configured Oracle data source instan
 
 ## Plugin Signature and Verification
 
-Official release archives are cryptographically signed using Grafana Labs' official signing tool (`@grafana/sign-plugin`) configured with universal root URL patterns (`http://*`, `https://*`). This signature allows the plugin to load on any hostname or IP address without signature warning barriers.
+Official release archives are cryptographically signed using Grafana Labs' official signing tool (`@grafana/sign-plugin`). The signature covers all standard Grafana deployment ports and patterns:
+- Port 3000 (standard default: `http://localhost:3000/`, `http://*:3000/`, `https://*:3000/`)
+- Ports 80 and 443 (reverse proxies, Nginx, Traefik: `http://*/`, `https://*/`)
+- Common alternative ports (8080, 8443, 9000, 3001)
 
-If compiling custom unsigned builds, enable unsigned plugin loading in `/etc/grafana/grafana.ini`:
+### Custom or Non-Standard Ports
+Under Grafana's private signing model, Grafana validates the plugin's signature against its own `root_url` setting. If your Grafana instance runs on a custom port not listed above (for example, `http://localhost:9999/`), Grafana may report that the signature root URL does not match.
+
+To allow the plugin on any arbitrary custom port, add the plugin ID to your `/etc/grafana/grafana.ini`:
 ```ini
 [plugins]
 allow_loading_unsigned_plugins = oracle-grafana-datasource
 ```
-Then restart `grafana-server`.
+Or in Docker environments, set the environment variable:
+```bash
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=oracle-grafana-datasource
+```
+Then restart your Grafana server.
 
 ---
 
