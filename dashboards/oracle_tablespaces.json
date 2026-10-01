@@ -1,0 +1,781 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ORACLE",
+      "label": "Oracle Data Source",
+      "description": "Oracle Database Data Source",
+      "type": "datasource",
+      "pluginId": "oracle-grafana-datasource",
+      "pluginName": "Oracle Data Source"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "oracle-grafana-datasource",
+      "name": "Oracle Data Source",
+      "version": "2.3.0"
+    }
+  ],
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "title": "Storage Capacity Overview",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Allocated Storage",
+      "description": "Sum of all datafile sizes currently allocated across all tablespaces",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT round(sum(bytes) / 1024 / 1024 / 1024, 2) AS total_gb FROM dba_data_files"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decgbytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total Used Storage",
+      "description": "Total bytes consumed by database segments (tables, indexes, LOBs)",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT round((a.allocated - nvl(f.free, 0)) / 1024 / 1024 / 1024, 2) AS used_gb FROM (SELECT sum(bytes) allocated FROM dba_data_files) a, (SELECT sum(bytes) free FROM dba_free_space) f"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decgbytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#EAB839",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Total Free Storage",
+      "description": "Total unallocated free space remaining within existing datafiles",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT round(nvl(sum(bytes), 0) / 1024 / 1024 / 1024, 2) AS free_gb FROM dba_free_space"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decgbytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "gauge",
+      "title": "Overall Storage Utilization",
+      "description": "Percentage of allocated datafile space currently consumed",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT round(((a.allocated - nvl(f.free, 0)) / greatest(a.allocated, 1)) * 100, 1) AS pct_used FROM (SELECT sum(bytes) allocated FROM dba_data_files) a, (SELECT sum(bytes) free FROM dba_free_space) f"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 101,
+      "title": "Tablespace Space Utilization & Quotas",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 5,
+      "type": "bargauge",
+      "title": "Tablespace Utilization Percentage",
+      "description": "Real-time tablespace utilization derived from dba_tablespace_usage_metrics",
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 0,
+        "y": 6
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT tablespace_name, round(used_percent, 1) AS used_percent FROM dba_tablespace_usage_metrics ORDER BY used_percent DESC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "table",
+      "title": "Tablespace Allocation Breakdown",
+      "description": "Comprehensive view of allocated, used, and free space per tablespace",
+      "gridPos": {
+        "h": 8,
+        "w": 14,
+        "x": 10,
+        "y": 6
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT d.tablespace_name, d.status, d.contents, round(nvl(a.bytes, 0) / 1024 / 1024, 1) AS total_mb, round((nvl(a.bytes, 0) - nvl(f.bytes, 0)) / 1024 / 1024, 1) AS used_mb, round(nvl(f.bytes, 0) / 1024 / 1024, 1) AS free_mb, round(((nvl(a.bytes, 0) - nvl(f.bytes, 0)) / greatest(nvl(a.bytes, 1), 1)) * 100, 1) AS pct_used FROM dba_tablespaces d LEFT JOIN (SELECT tablespace_name, sum(bytes) bytes FROM dba_data_files GROUP BY tablespace_name) a ON d.tablespace_name = a.tablespace_name LEFT JOIN (SELECT tablespace_name, sum(bytes) bytes FROM dba_free_space GROUP BY tablespace_name) f ON d.tablespace_name = f.tablespace_name ORDER BY pct_used DESC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "PCT_USED"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 75
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TOTAL_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USED_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FREE_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "footer": {
+          "show": true,
+          "reducer": [
+            "sum"
+          ]
+        },
+        "showHeader": true
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 102,
+      "title": "Datafile Capacity & Auto-Extend Headroom",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Datafile Storage & Auto-Extend Configuration",
+      "description": "Datafiles on filesystem or ASM, current sizes, and maximum expansion thresholds",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT file_id, tablespace_name, file_name, round(bytes / 1024 / 1024, 1) AS size_mb, round(maxbytes / 1024 / 1024, 1) AS max_size_mb, autoextensible, round(increment_by * 8192 / 1024 / 1024, 1) AS inc_mb FROM dba_data_files ORDER BY tablespace_name, file_id"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SIZE_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MAX_SIZE_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "INC_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AUTOEXTENSIBLE"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "YES": {
+                        "color": "green",
+                        "text": "YES"
+                      }
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "options": {
+                      "NO": {
+                        "color": "#EAB839",
+                        "text": "NO"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "footer": {
+          "show": true,
+          "reducer": [
+            "count"
+          ]
+        },
+        "showHeader": true
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 103,
+      "title": "Temporary & Undo Space Health",
+      "type": "row",
+      "panels": []
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Temporary Tablespace Allocation (v$temp_space_header)",
+      "description": "Temporary tablespace usage for sort operations, hash joins, and temporary tables",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT tablespace_name, round(sum(bytes_used) / 1024 / 1024, 2) AS used_mb, round(sum(bytes_free) / 1024 / 1024, 2) AS free_mb FROM v$temp_space_header GROUP BY tablespace_name"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USED_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "FREE_MB"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 9,
+      "type": "bargauge",
+      "title": "Undo Segment Status & Retention (dba_undo_extents)",
+      "description": "Undo space distribution (ACTIVE, UNEXPIRED, EXPIRED)",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "datasource": {
+        "type": "oracle-grafana-datasource",
+        "uid": "${DS_ORACLE}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "oracle-grafana-datasource",
+            "uid": "${DS_ORACLE}"
+          },
+          "o_sql": "SELECT status, round(sum(bytes) / 1024 / 1024, 2) AS mb FROM dba_undo_extents GROUP BY status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "oracle",
+    "storage",
+    "tablespaces",
+    "dba"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "label": "Oracle Datasource",
+        "multi": false,
+        "name": "DS_ORACLE",
+        "options": [],
+        "query": "oracle-grafana-datasource",
+        "refresh": 1,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Oracle Tablespace & Storage Capacity",
+  "uid": "oracle-db-tablespaces",
+  "version": 1
+}

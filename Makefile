@@ -33,6 +33,7 @@ dist: build-all-backends
 	cp -r src/img $(DIST_DIR)/ 2>/dev/null || true
 	cp src/plugin.json $(DIST_DIR)/
 	cp README.md LICENSE CHANGELOG.md $(DIST_DIR)/ 2>/dev/null || true
+	cp -r dashboards $(DIST_DIR)/ 2>/dev/null || true
 	@if [ -f src/module.js ]; then cp src/module.js* $(DIST_DIR)/; fi
 	@echo "==> Dist directory ready."
 

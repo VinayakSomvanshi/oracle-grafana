@@ -1,5 +1,26 @@
 # Oracle Grafana Changelog
 
+## 2.3.0
+
+Feature release introducing out-of-the-box DBA starter dashboards, automatic dashboard discovery in Grafana plugin navigation, and tablespace capacity planning.
+
+### DBA Starter Dashboards (Tier 3)
+- **Oracle Database Performance & Health (`oracle_performance.json`)**:
+  - Live session tracking: Active user sessions, inactive/idle sessions, and background process count (`v$session`).
+  - Cache efficiency: Real-time Buffer Cache Hit Ratio and Library Cache Hit Ratio gauges (`v$sysstat`, `v$librarycache`).
+  - Resource bottlenecks: Top 10 non-idle system wait events and full wait class breakdown (`v$system_event`, `v$system_wait_class`).
+  - Heavy query analysis: Top 10 SQL statements by elapsed execution time (`v$sqlarea`) with CPU time, buffer gets, and disk reads.
+  - Active operations & logs: Long-running operations progress tracking (`v$session_longops`) and hourly redo log switch activity (`v$log_history`).
+- **Oracle Tablespace & Storage Capacity (`oracle_tablespaces.json`)**:
+  - Global storage KPIs: Total allocated, used, and free storage (GB) with overall utilization gauge.
+  - Tablespace metrics: Real-time tablespace space usage percentages (`dba_tablespace_usage_metrics`) and comprehensive allocation breakdown (`dba_tablespaces`, `dba_data_files`, `dba_free_space`).
+  - Datafile capacity: Auto-extend status, max expansion limits, and increment sizes (`dba_data_files`).
+  - Temporary & Undo health: Temp tablespace allocations (`v$temp_space_header`) and Undo segment status/retention (`dba_undo_extents`).
+- **Plugin Dashboard Integration**:
+  - Registered all dashboards under `includes` in `plugin.json` (`addToNav: true`) for 1-click importing directly from the Grafana datasource plugin settings.
+
+---
+
 ## 2.2.0
 
 Major feature release introducing Oracle Cloud (OCI) Autonomous Database support, Monaco SQL CodeEditor, Oracle Wallet mTLS, dual-column template variables, and rich LOB/JSON data type handling.

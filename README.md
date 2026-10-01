@@ -33,10 +33,10 @@ Choose the installation method best suited to your environment:
 Use Grafana's built-in CLI subcommand to download, verify, and unpack the release directly:
 ```bash
 # Modern Grafana (v10+, v11+, v12+, v13+)
-sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip plugins install oracle-grafana-datasource
+sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.3.0.zip plugins install oracle-grafana-datasource
 
 # Legacy Grafana
-sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip plugins install oracle-grafana-datasource
+sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.3.0.zip plugins install oracle-grafana-datasource
 
 # Restart Grafana
 sudo systemctl restart grafana-server
@@ -47,7 +47,7 @@ sudo systemctl restart grafana-server
 Pass the `GF_INSTALL_PLUGINS` environment variable when starting your Grafana container. Grafana automatically installs and activates the plugin upon startup:
 ```bash
 docker run -d -p 3000:3000 \
-  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip;oracle-grafana-datasource" \
+  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.3.0.zip;oracle-grafana-datasource" \
   grafana/grafana:latest
 ```
 
@@ -59,7 +59,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.zip;oracle-grafana-datasource
+      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.3.0.zip;oracle-grafana-datasource
 ```
 
 ### Method 3: One-Line Installer Script
@@ -75,13 +75,13 @@ For bastion hosts or environments with restricted internet access:
 
 1. Download the release archive:
    ```bash
-   curl -fSL -o oracle-grafana-datasource-2.2.0.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.2.0.tar.gz
+   curl -fSL -o oracle-grafana-datasource-2.3.0.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.3.0.tar.gz
    ```
 
 2. Extract into your Grafana plugins directory:
    ```bash
    sudo mkdir -p /var/lib/grafana/plugins/oracle-grafana-datasource
-   sudo tar -xzf oracle-grafana-datasource-2.2.0.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
+   sudo tar -xzf oracle-grafana-datasource-2.3.0.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
    sudo chown -R grafana:grafana /var/lib/grafana/plugins/oracle-grafana-datasource
    ```
 
@@ -312,6 +312,35 @@ FROM all_tables
 WHERE owner = '${schema_name}'
 ORDER BY table_name ASC
 ```
+
+---
+
+## Out-of-the-Box Starter Dashboards
+
+The plugin bundles production-ready dashboards pre-configured with industry-standard Oracle dynamic performance views (`V$`) and data dictionary views (`DBA_`):
+
+### 1. Oracle Database Performance & Health (`oracle_performance.json`)
+* **Session Metrics**: Real-time counters for Active User Sessions, Inactive Sessions, and Background Processes.
+* **Cache Efficiency**: Buffer Cache Hit Ratio and Library Cache Hit Ratio gauges with health thresholds.
+* **Wait Events & Contention**: Top 10 non-idle system wait events ranked by time waited (seconds) and wait class aggregates (`v$system_event`, `v$system_wait_class`).
+* **Top SQL Workload**: Top 10 longest-running SQL statements with execution counts, CPU time, elapsed time, buffer gets, and disk reads (`v$sqlarea`).
+* **Active Long Operations**: Progress gauge and remaining time for operations running >6 seconds (`v$session_longops`).
+* **Redo Log Switches**: Hourly redo log switch frequency chart over the last 24 hours (`v$log_history`).
+
+### 2. Oracle Tablespace & Storage Capacity (`oracle_tablespaces.json`)
+* **Storage KPIs**: Total Allocated Storage (GB), Total Used Storage (GB), Total Free Storage (GB), and Overall Database Utilization Gauge.
+* **Tablespace Usage**: Real-time space utilization percentage per tablespace (`dba_tablespace_usage_metrics`).
+* **Detailed Allocation Breakdown**: Tablespace status, contents, total MB, used MB, free MB, and percentage used (`dba_tablespaces`, `dba_data_files`, `dba_free_space`).
+* **Datafile Headroom**: File-level auto-extend status, current size, maximum capacity limits, and increment blocks (`dba_data_files`).
+* **Temp & Undo Health**: Temporary tablespace utilization (`v$temp_space_header`) and Undo retention extent distribution (`dba_undo_extents`).
+
+### 3. Oracle Database & Metric Analytics (`oracle_analytics.json`)
+* **Time-Series Analysis**: Dynamic time-series monitoring with time-shift comparisons and min/max/average summary stats.
+* **Timezone Control**: Live timezone conversion via the `${db_tz}` template variable for seamless multi-region operations.
+
+### How to Import Dashboards
+* **Automatic (Recommended)**: In Grafana, navigate to **Administration > Plugins > Oracle Data Source**, switch to the **Dashboards** tab, and click **Import** next to the desired dashboard.
+* **Manual**: Navigate to **Dashboards > New > Import**, upload the JSON file from the `dashboards/` directory, and select your configured Oracle data source.
 
 ---
 

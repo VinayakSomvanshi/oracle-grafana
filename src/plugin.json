@@ -23,11 +23,31 @@
       "large": "img/logo-512.png"
     },
     "screenshots": [],
-    "updated": "2026-09-30",
-    "version": "2.2.0"
+    "updated": "2026-10-01",
+    "version": "2.3.0"
   },
   "metrics": true,
   "name": "Oracle Data Source",
   "type": "datasource",
-  "alerting": true
+  "alerting": true,
+  "includes": [
+    {
+      "type": "dashboard",
+      "name": "Oracle Database Performance & Health",
+      "path": "dashboards/oracle_performance.json",
+      "addToNav": true
+    },
+    {
+      "type": "dashboard",
+      "name": "Oracle Tablespace & Storage Capacity",
+      "path": "dashboards/oracle_tablespaces.json",
+      "addToNav": true
+    },
+    {
+      "type": "dashboard",
+      "name": "Oracle Database & Metric Analytics",
+      "path": "dashboards/oracle_analytics.json",
+      "addToNav": true
+    }
+  ]
 }
