@@ -1,6 +1,6 @@
 -- Run as SYSTEM connected to FREEPDB1: sqlplus system@localhost:1521/FREEPDB1
 -- CHANGE THE TEST PASSWORD.
-CREATE USER grafana IDENTIFIED BY "Grafana123" QUOTA 50M ON USERS;
+CREATE USER grafana IDENTIFIED BY "YourSecurePasswordHere123!" QUOTA 50M ON USERS;
 GRANT CREATE SESSION, CREATE TABLE TO grafana;
 CREATE TABLE grafana.metrics_test (ts DATE, val NUMBER);
 INSERT INTO grafana.metrics_test
