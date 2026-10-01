@@ -21,7 +21,7 @@
       "type": "datasource",
       "id": "oracle-grafana-datasource",
       "name": "Oracle Data Source",
-      "version": "2.1.1"
+      "version": "2.1.2"
     }
   ],
   "annotations": {
@@ -81,7 +81,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test WHERE ts IS NOT NULL) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
+          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test WHERE ts IS NOT NULL) WHERE $__timeFilter(ts_utc) ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
         }
       ],
       "fieldConfig": {
@@ -147,7 +147,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT ROUND(AVG(val), 2) AS avg_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+          "o_sql": "SELECT ROUND(AVG(val), 2) AS avg_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE $__timeFilter(ts_utc)"
         }
       ],
       "fieldConfig": {
@@ -213,7 +213,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT MAX(val) AS max_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+          "o_sql": "SELECT MAX(val) AS max_val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE $__timeFilter(ts_utc)"
         }
       ],
       "fieldConfig": {
@@ -279,7 +279,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT COUNT(*) AS total_count FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to"
+          "o_sql": "SELECT COUNT(*) AS total_count FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc FROM metrics_test) WHERE $__timeFilter(ts_utc)"
         }
       ],
       "fieldConfig": {
@@ -350,7 +350,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT ts_utc AS ts, val, ROUND(AVG(val) OVER (ORDER BY ts_utc ROWS BETWEEN 5 PRECEDING AND CURRENT ROW), 1) AS moving_avg FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc ASC"
+          "o_sql": "SELECT ts_utc AS ts, val, ROUND(AVG(val) OVER (ORDER BY ts_utc ROWS BETWEEN 5 PRECEDING AND CURRENT ROW), 1) AS moving_avg FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE $__timeFilter(ts_utc) ORDER BY ts_utc ASC"
         }
       ],
       "fieldConfig": {
@@ -458,7 +458,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test WHERE val IS NOT NULL) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
+          "o_sql": "SELECT val FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test WHERE val IS NOT NULL) WHERE $__timeFilter(ts_utc) ORDER BY ts_utc DESC FETCH FIRST 1 ROWS ONLY"
         }
       ],
       "fieldConfig": {
@@ -533,7 +533,7 @@
             "type": "oracle-grafana-datasource",
             "uid": "${DS_ORACLE}"
           },
-          "o_sql": "SELECT ts_utc AS \"Timestamp (UTC)\", val AS \"Metric Value\", CASE WHEN val >= 85 THEN 'Critical' WHEN val >= 70 THEN 'Warning' ELSE 'Normal' END AS \"Health Status\" FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), 'Asia/Kolkata')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE ts_utc BETWEEN $__from AND $__to ORDER BY ts_utc DESC FETCH FIRST ${row_limit} ROWS ONLY"
+          "o_sql": "SELECT ts_utc AS \"Timestamp (UTC)\", val AS \"Metric Value\", CASE WHEN val >= 85 THEN 'Critical' WHEN val >= 70 THEN 'Warning' ELSE 'Normal' END AS \"Health Status\" FROM (SELECT CAST(SYS_EXTRACT_UTC(FROM_TZ(CAST(ts AS TIMESTAMP), '${db_tz}')) AS DATE) AS ts_utc, val FROM metrics_test) WHERE $__timeFilter(ts_utc) ORDER BY ts_utc DESC FETCH FIRST ${row_limit} ROWS ONLY"
         }
       ],
       "fieldConfig": {
@@ -766,6 +766,58 @@
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "UTC",
+          "value": "UTC"
+        },
+        "description": "Timezone of Oracle DATE columns (matches database server timezone)",
+        "hide": 0,
+        "label": "DB Timezone",
+        "name": "db_tz",
+        "options": [
+          {
+            "selected": true,
+            "text": "UTC",
+            "value": "UTC"
+          },
+          {
+            "selected": false,
+            "text": "Asia/Kolkata",
+            "value": "Asia/Kolkata"
+          },
+          {
+            "selected": false,
+            "text": "America/New_York",
+            "value": "America/New_York"
+          },
+          {
+            "selected": false,
+            "text": "America/Los_Angeles",
+            "value": "America/Los_Angeles"
+          },
+          {
+            "selected": false,
+            "text": "Europe/London",
+            "value": "Europe/London"
+          },
+          {
+            "selected": false,
+            "text": "Europe/Berlin",
+            "value": "Europe/Berlin"
+          },
+          {
+            "selected": false,
+            "text": "Asia/Tokyo",
+            "value": "Asia/Tokyo"
+          }
+        ],
+        "query": "UTC, Asia/Kolkata, America/New_York, America/Los_Angeles, Europe/London, Europe/Berlin, Asia/Tokyo",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
       {
         "current": {
           "selected": true,

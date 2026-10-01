@@ -20,6 +20,7 @@ type OracleDatasourceQuery struct {
 	O_parsed     string               `json:"o_parsed"`
 	O_sql        string               `json:"o_sql"`
 	RefId        string               `json:"refId"`
+	TimeRange    backend.TimeRange    `json:"-"`
 }
 
 type OracleDatasourceInfo struct {
@@ -41,6 +42,10 @@ func (q *OracleDatasourceQuery) MakeQuery(ctx context.Context, c *OracleDatasour
 	if strings.TrimSpace(rawSQL) == "" {
 		rawSQL = q.O_sql
 	}
+
+	// Expand backend macros ($__timeFilter, $__timeFrom, $__timeTo, $__from, $__to, etc.)
+	// Enables native Grafana Alerting and background queries without frontend dependency.
+	rawSQL = InterpolateMacros(rawSQL, q.TimeRange, q.IntervalMs)
 
 	// 1. Mandatory In-Plugin Lexer / Read-Only Validation (Layer 1)
 	if err := ValidateReadOnlyQuery(rawSQL); err != nil {
@@ -148,5 +153,9 @@ func (q *OracleDatasourceQuery) ParseDatasourceQuery(query backend.DataQuery) er
 		log.DefaultLogger.Error("Error unmarshaling query JSON", "error", err)
 	}
 	q.RefId = query.RefID
+	q.TimeRange = query.TimeRange
+	if q.IntervalMs == 0 && query.Interval > 0 {
+		q.IntervalMs = query.Interval.Milliseconds()
+	}
 	return err
 }

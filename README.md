@@ -33,10 +33,10 @@ Choose the installation method best suited to your environment:
 Use Grafana's built-in CLI subcommand to download, verify, and unpack the release directly:
 ```bash
 # Modern Grafana (v10+, v11+, v12+, v13+)
-sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip plugins install oracle-grafana-datasource
+sudo grafana cli --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip plugins install oracle-grafana-datasource
 
 # Legacy Grafana
-sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip plugins install oracle-grafana-datasource
+sudo grafana-cli --homepath /usr/share/grafana --pluginUrl https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip plugins install oracle-grafana-datasource
 
 # Restart Grafana
 sudo systemctl restart grafana-server
@@ -47,7 +47,7 @@ sudo systemctl restart grafana-server
 Pass the `GF_INSTALL_PLUGINS` environment variable when starting your Grafana container. Grafana automatically installs and activates the plugin upon startup:
 ```bash
 docker run -d -p 3000:3000 \
-  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip;oracle-grafana-datasource" \
+  -e "GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip;oracle-grafana-datasource" \
   grafana/grafana:latest
 ```
 
@@ -59,7 +59,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.zip;oracle-grafana-datasource
+      - GF_INSTALL_PLUGINS=https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.zip;oracle-grafana-datasource
 ```
 
 ### Method 3: One-Line Installer Script
@@ -75,13 +75,13 @@ For bastion hosts or environments with restricted internet access:
 
 1. Download the release archive:
    ```bash
-   curl -fSL -o oracle-grafana-datasource-2.1.1.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.1.tar.gz
+   curl -fSL -o oracle-grafana-datasource-2.1.2.tar.gz https://github.com/VinayakSomvanshi/oracle-grafana/releases/latest/download/oracle-grafana-datasource-2.1.2.tar.gz
    ```
 
 2. Extract into your Grafana plugins directory:
    ```bash
    sudo mkdir -p /var/lib/grafana/plugins/oracle-grafana-datasource
-   sudo tar -xzf oracle-grafana-datasource-2.1.1.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
+   sudo tar -xzf oracle-grafana-datasource-2.1.2.tar.gz -C /var/lib/grafana/plugins/oracle-grafana-datasource --strip-components=1
    sudo chown -R grafana:grafana /var/lib/grafana/plugins/oracle-grafana-datasource
    ```
 
@@ -207,16 +207,19 @@ SELECT
   tablespace_name AS "metric",
   used_space_pct AS "value"
 FROM dba_tablespace_usage_metrics
-WHERE collection_time >= TO_TIMESTAMP('${__from:date:YYYY-MM-DD HH24:MI:SS}', 'YYYY-MM-DD HH24:MI:SS')
-  AND collection_time <= TO_TIMESTAMP('${__to:date:YYYY-MM-DD HH24:MI:SS}', 'YYYY-MM-DD HH24:MI:SS')
+WHERE $__timeFilter(collection_time)
 ORDER BY collection_time ASC
 ```
 
-#### Supported Time Range Macros
-- `${__from:date:YYYY-MM-DD HH24:MI:SS}`: Start of the Grafana dashboard time picker range formatted for Oracle `TO_TIMESTAMP`.
-- `${__to:date:YYYY-MM-DD HH24:MI:SS}`: End of the Grafana dashboard time picker range formatted for Oracle `TO_TIMESTAMP`.
-- `$__from`: Start time in Unix epoch milliseconds.
-- `$__to`: End time in Unix epoch milliseconds.
+#### Supported Time Range Macros & Alerting
+All time macros are evaluated directly on the Go backend server, ensuring full compatibility with **Grafana Alerting** and background evaluation jobs:
+
+- `$__timeFilter(column)`: Automatically expands to `column >= TO_TIMESTAMP('...', 'YYYY-MM-DD HH24:MI:SS.FF3') AND column <= TO_TIMESTAMP('...', 'YYYY-MM-DD HH24:MI:SS.FF3')` in UTC.
+- `$__timeFrom()` / `$__timeTo()`: Start and end of the dashboard time range as Oracle `TO_TIMESTAMP(...)` literals.
+- `$__unixEpochFilter(column)`: Expands to `column >= <from_sec> AND column <= <to_sec>` for tables storing timestamps as integer Unix epoch seconds.
+- `$__unixEpochFrom()` / `$__unixEpochTo()`: Start and end Unix epoch timestamps in integer seconds.
+- `$__interval` / `$__interval_ms`: Query interval in seconds and milliseconds.
+- `$__from` / `$__to`: Start and end times in Unix epoch milliseconds or formatted timestamp.
 
 ### 2. Table Visualizations
 

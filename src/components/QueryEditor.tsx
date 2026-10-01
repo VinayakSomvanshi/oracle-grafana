@@ -32,7 +32,7 @@ export function QueryEditor({ onChange, query }: Props) {
         <Label description='Query to make on an Oracle database'>
           Query
         </Label>
-        <TextArea onChange={onSQLChange} placeholder='SELECT * \n FROM SYS.races \nWHERE data BETWEEN $__from AND $__to' rows={12} value={query.o_sql} required width='100%' />
+        <TextArea onChange={onSQLChange} placeholder='SELECT SYSDATE AS time, 100 AS value FROM DUAL' rows={12} value={query.o_sql} required width='100%' />
       </div>
       <div style={{
         flexGrow: 1,

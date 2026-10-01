@@ -1,5 +1,20 @@
 # Oracle Grafana Changelog
 
+## 2.1.2
+
+Feature and stability release introducing native backend macro interpolation for Grafana Alerting and universal Oracle defaults.
+
+### Backend Macro Engine & Alerting
+- **Go Backend Macro Engine**: Added native server-side evaluation for `$__timeFilter(column)`, `$__timeFrom()`, `$__timeTo()`, `$__unixEpochFilter(column)`, `$__unixEpochFrom()`, `$__unixEpochTo()`, `$__interval`, and `$__interval_ms`.
+- **Full Grafana Alerting Compatibility**: Alert queries execute and evaluate time ranges natively on the server without requiring browser session or frontend JavaScript interpolation.
+- **Connection Log Masking**: Fixed empty password replacement in connection debug logging.
+
+### Dashboard & Query Usability
+- **Universal Default Query**: Replaced legacy `SYS.races` query with standard `SELECT SYSDATE AS time, 100 AS value FROM DUAL`, preventing `ORA-00942` errors on initial panel creation.
+- **Configurable Dashboard Timezone**: Updated `dashboards/oracle_analytics.json` with a `${db_tz}` template variable and native `$__timeFilter(ts_utc)` macros for multi-region compatibility.
+
+---
+
 ## 2.1.1
 
 Maintenance release enabling Grafana Alerting integration.

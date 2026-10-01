@@ -30,7 +30,10 @@ func (c *OracleDatasourceConnection) Connect(settings *OracleDatasourceSettings)
 			connectionString = go_ora.BuildUrl(settings.O_hostname, settings.O_port, settings.O_service, settings.O_user, settings.O_password, urlOptions)
 		}
 
-		masked := strings.Replace(connectionString, settings.O_password, "********", 1)
+		masked := connectionString
+		if len(settings.O_password) > 0 {
+			masked = strings.Replace(connectionString, settings.O_password, "********", 1)
+		}
 		log.DefaultLogger.Debug("Connecting to Oracle:", "connStr", masked)
 
 		connection, conErr := sql.Open("oracle", connectionString)
