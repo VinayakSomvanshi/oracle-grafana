@@ -2,7 +2,7 @@ PLUGIN_ID ?= oracle-grafana-datasource
 VERSION ?= $(shell cat package.json | grep '"version"' | head -n1 | cut -d'"' -f4)
 DIST_DIR := dist
 
-.PHONY: all clean test build build-backend build-all-backends dist sign package
+.PHONY: all clean test build build-backend build-all-backends dist sign package demo demo-down
 
 all: test build-backend
 
@@ -59,3 +59,11 @@ package:
 	rm -rf /tmp/$(PLUGIN_ID) && mkdir -p /tmp/$(PLUGIN_ID) && cp -r $(DIST_DIR)/* /tmp/$(PLUGIN_ID)/
 	cd /tmp && zip -q -r $(CURDIR)/$(PLUGIN_ID)-$(VERSION).zip $(PLUGIN_ID) && rm -rf /tmp/$(PLUGIN_ID)
 	@echo "Created $(PLUGIN_ID)-$(VERSION).tar.gz and $(PLUGIN_ID)-$(VERSION).zip"
+
+demo: dist
+	@echo "==> Starting Oracle 23ai + Grafana 1-command demo sandbox..."
+	docker compose -f docker-compose.demo.yml up
+
+demo-down:
+	@echo "==> Stopping demo sandbox and cleaning up volumes..."
+	docker compose -f docker-compose.demo.yml down -v

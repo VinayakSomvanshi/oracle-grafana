@@ -24,6 +24,35 @@ This plugin connects Grafana directly to any Oracle Database instance (11g, 12c,
 
 ---
 
+## 1-Command Demo Sandbox (60-Second Evaluation)
+
+Evaluate the plugin locally without installing Oracle or configuring datasources manually. The bundled demo starts an **Oracle Database 23ai Free** container and a **Grafana 10** container with the datasource and all dashboards pre-provisioned:
+
+```bash
+# Start the demo sandbox
+docker compose -f docker-compose.demo.yml up
+
+# Or via Makefile
+make demo
+```
+
+Once started:
+1. Open your browser to **http://localhost:3000** (anonymous administrator login is enabled; no credentials required).
+2. Go to **Dashboards > Browse > Oracle Database** to view:
+   - **Oracle Database Performance & Health**
+   - **Oracle Tablespace & Storage Capacity**
+   - **Oracle Database & Metric Analytics**
+3. A background `DBMS_SCHEDULER` job inside Oracle continuously generates live synthetic metrics into `grafana_demo.metrics_test` every 10 seconds.
+
+To stop the sandbox and remove demo volumes:
+```bash
+docker compose -f docker-compose.demo.yml down -v
+# Or
+make demo-down
+```
+
+---
+
 ## Installation
 
 Choose the installation method best suited to your environment:

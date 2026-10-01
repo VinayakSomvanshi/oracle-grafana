@@ -4,6 +4,13 @@
 
 Feature release introducing out-of-the-box DBA starter dashboards, automatic dashboard discovery in Grafana plugin navigation, and tablespace capacity planning.
 
+### Contributor Sandbox & Evaluation (Tier 4)
+- **1-Command Demo Environment (`docker-compose.demo.yml`)**:
+  - Full local testbed pairing Oracle Database 23ai Free with Grafana 10.
+  - Pre-provisioned datasource (`Oracle-Demo`) and all three bundled dashboards pre-loaded into Grafana.
+  - Automated database seed script (`demo/init.sql`) populating historical metrics, sample orders with native JSON and CLOBs, and configuring a `DBMS_SCHEDULER` continuous background metric generator.
+  - Added `make demo` and `make demo-down` workflow commands.
+
 ### DBA Starter Dashboards (Tier 3)
 - **Oracle Database Performance & Health (`oracle_performance.json`)**:
   - Live session tracking: Active user sessions, inactive/idle sessions, and background process count (`v$session`).

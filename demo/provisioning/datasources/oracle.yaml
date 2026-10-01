@@ -1,0 +1,18 @@
+apiVersion: 1
+
+datasources:
+  - name: Oracle-Demo
+    type: oracle-grafana-datasource
+    access: proxy
+    uid: DS_ORACLE
+    isDefault: true
+    jsonData:
+      o_hostname: oracle
+      o_port: 1521
+      o_service: FREEPDB1
+      o_user: grafana_demo
+      o_tls: false
+      o_tlsVerify: false
+    secureJsonData:
+      o_password: oracle_password
+    editable: true
